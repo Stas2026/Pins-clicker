@@ -24,13 +24,26 @@
 
         /* Фон для меню із зображенням */
         #menu-screen {
-            background-image: url('images/fon_meny.png'); /* Шлях до фону */
-            background-size: cover;
-            background-position: center;
+            background-image: url('images/fon_meny.png'); /* Відновлено старий шлях */
+            background-size: cover; /* Зображення покриває весь екран */
+            background-position: center; /* Центрування зображення */
             width: 100vw;
             height: 100vh;
             display: none; /* Прихований на початку */
             position: relative;
+        }
+
+        /* Фон для сцени pin pack */
+        #pin-pack-screen {
+            background-color: lightgrey; /* Колір фону сцени pin pack */
+            width: 100vw;
+            height: 100vh;
+            display: none; /* Прихований на початку */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Стиль для зображення spicypin.png */
@@ -42,6 +55,31 @@
             width: 120px; /* Ширина зображення */
             height: auto;
             cursor: pointer;
+        }
+
+        /* Стиль для зображення pinpack.png */
+        #pin-pack {
+            position: absolute;
+            bottom: 50px; /* Піднято на 50px вище */
+            left: 0; /* Вирівнюємо вліво */
+            width: 100px; /* Ширина зображення (можна змінити) */
+            height: auto;
+            margin: 10px; /* Відстань від краю */
+        }
+
+        /* Стиль для тексту на сцені pin pack */
+        #pin-pack-text {
+            font-size: 2em;
+            color: black;
+            margin-bottom: 20px; /* Відстань між текстом і зображенням */
+        }
+
+        /* Стиль для зображення belle_pin.png на сцені pin pack */
+        #belle-pin-pinpack {
+            width: 120px; /* Розмір зображення такий самий як у spicypin.png */
+            height: auto;
+            opacity: 0; /* Початковий стан невидимий */
+            transition: opacity 1s; /* Плавне відображення */
         }
 
         /* Стиль для відображення рекорду */
@@ -59,16 +97,6 @@
             font-size: 1.5em;
             color: white; /* Колір тексту завантаження */
         }
-
-        /* Стиль для зображення pin.pack.png */
-        #pin-pack {
-            position: absolute;
-            bottom: 50px; /* Піднято на 50px вище */
-            left: 0; /* Вирівнюємо вліво */
-            width: 100px; /* Ширина зображення (можна змінити) */
-            height: auto;
-            margin: 10px; /* Відстань від краю */
-        }
     </style>
 </head>
 <body>
@@ -84,6 +112,15 @@
         <img id="belle-pin" src="images/spicypin.png" alt="Spicy Pin"> <!-- Змінено на spicypin.png -->
         <img id="pin-pack" src="images/pinpack.png" alt="Pin Pack"> <!-- Додано нове зображення -->
     </div>
+
+    <!-- Сцена pin pack -->
+    <div id="pin-pack-screen">
+        <div id="pin-pack-text">Новий значок</div>
+        <img id="belle-pin-pinpack" src="images/belle_pin.png" alt="Belle Pin">
+    </div>
+
+    <!-- Аудіо для відтворення -->
+    <audio id="menu-sound" src="sound/music_menu.ogg"></audio>
 
     <script>
         let loading = 0;
@@ -116,6 +153,33 @@
         document.getElementById('belle-pin').addEventListener('click', function() {
             record++; // Збільшуємо значення рекорду
             document.getElementById('record-display').textContent = 'Рекорд: ' + record; // Оновлюємо відображення
+        });
+
+        // Відображення сцени pin pack при натисканні на pinpack.png
+        document.getElementById('pin-pack').addEventListener('click', function() {
+            document.getElementById('menu-screen').style.display = 'none'; // Приховуємо сцену меню
+            const pinPackScreen = document.getElementById('pin-pack-screen');
+            pinPackScreen.style.display = 'flex'; // Показуємо сцену pin pack
+
+            // Скидання opacity і плавне відображення зображення
+            const bellePin = document.getElementById('belle-pin-pinpack');
+            bellePin.style.opacity = 0;
+            setTimeout(() => {
+                bellePin.style.opacity = 1;
+            }, 10); // Невелика затримка для відновлення анімації
+        });
+
+        // Повернення до меню при натисканні на екран сцени pin pack
+        document.getElementById('pin-pack-screen').addEventListener('click', function() {
+            document.getElementById('pin-pack-screen').style.display = 'none'; // Приховуємо сцену pin pack
+            document.getElementById('menu-screen').style.display = 'block'; // Показуємо сцену меню
+        });
+
+        // Відтворення звуку при натисканні на фон меню
+        document.getElementById('menu-screen').addEventListener('click', function(event) {
+            if (event.target === document.getElementById('menu-screen')) {
+                document.getElementById('menu-sound').play();
+            }
         });
     </script>
 </body>
