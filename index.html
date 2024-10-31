@@ -18,17 +18,19 @@
             background-position: center;
             width: 100vw;
             height: 100vh;
-            display: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: relative;
         }
 
         /* Прямокутник для технічної перерви */
-        #maintenance-screen {
-            position: fixed;
+        #maintenance-overlay {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             background-color: rgba(128, 128, 128, 0.8); /* Сірий з прозорістю */
             color: white;
             display: flex;
@@ -36,7 +38,7 @@
             align-items: center;
             font-size: 2em;
             font-weight: bold;
-            z-index: 1000; /* На передньому плані */
+            z-index: 10; /* На передньому плані в межах menu-screen */
         }
 
         /* Інші стилі */
@@ -53,13 +55,12 @@
 </head>
 <body>
 
-    <!-- Екран технічної перерви -->
-    <div id="maintenance-screen">
-        Технічна перерва
-    </div>
-
     <!-- Меню -->
     <div id="menu-screen">
+        <!-- Прямокутник технічної перерви в межах меню -->
+        <div id="maintenance-overlay">
+            Технічна перерва
+        </div>
         <!-- Інший контент меню -->
     </div>
 
@@ -71,9 +72,9 @@
     <audio id="menu-sound" src="sound/brawloween_menu_1.mp3"></audio>
 
     <script>
-        // Приховати екран технічної перерви після затримки
+        // Приховати прямокутник технічної перерви після затримки
         setTimeout(() => {
-            document.getElementById('maintenance-screen').style.display = 'none';
+            document.getElementById('maintenance-overlay').style.display = 'none';
         }, 5000); // Затримка 5 секунд
 
         setTimeout(() => {
