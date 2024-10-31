@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pin sim remasted</title>
+    <title>Pin Sim Remastered</title>
     <style>
         body {
             margin: 0;
@@ -11,163 +11,74 @@
             overflow: hidden;
         }
 
-        /* Блакитний фон для екрану завантаження */
-        #loading-screen {
-            background-color: lightblue;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end; /* Вирівнюємо вниз */
-            padding-bottom: 20px; /* Відстань віднизу */
-        }
-
-        /* Фон для меню із зображенням */
+        /* Основні стилі */
         #menu-screen {
-            background-image: url('images/fon_meny.png'); /* Шлях до фону */
+            background-image: url('images/brawloween_lobby.png');
             background-size: cover;
             background-position: center;
             width: 100vw;
             height: 100vh;
-            display: none; /* Прихований на початку */
+            display: none;
             position: relative;
         }
 
-        /* Фон для сцени pin pack */
-        #pin-pack-screen {
-            background-color: lightgrey; /* Колір фону сцени pin pack */
+        /* Прямокутник для технічної перерви */
+        #maintenance-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            display: none; /* Прихований на початку */
-            position: relative;
+            background-color: rgba(128, 128, 128, 0.8); /* Сірий з прозорістю */
+            color: white;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
-
-        /* Стиль для зображення spicypin.png */
-        #belle-pin {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Центрування зображення */
-            width: 120px; /* Ширина зображення */
-            height: auto;
-            cursor: pointer;
-        }
-
-        /* Стиль для зображення pinpack.png */
-        #pin-pack {
-            position: absolute;
-            bottom: 50px; /* Піднято на 50px вище */
-            left: 0; /* Вирівнюємо вліво */
-            width: 100px; /* Ширина зображення (можна змінити) */
-            height: auto;
-            margin: 10px; /* Відстань від краю */
-        }
-
-        /* Стиль для тексту на сцені pin pack */
-        #pin-pack-text {
             font-size: 2em;
-            color: black;
-            margin-bottom: 20px; /* Відстань між текстом і зображенням */
-        }
-
-        /* Стиль для зображення belle_pin.png на сцені pin pack */
-        #belle-pin-pinpack {
-            width: 120px; /* Розмір зображення такий самий як у spicypin.png */
-            height: auto;
-            opacity: 0; /* Початковий стан невидимий */
-            transition: opacity 1s; /* Плавне відображення */
-        }
-
-        /* Стиль для відображення рекорду */
-        #record-display {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 2em;
-            color: white;
             font-weight: bold;
+            z-index: 1000; /* На передньому плані */
         }
 
-        /* Стиль для відображення завантаження */
-        .loading-text {
-            font-size: 1.5em;
-            color: white; /* Колір тексту завантаження */
+        /* Інші стилі */
+        #pin-pack-screen {
+            background-color: lightgreen;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
     </style>
 </head>
 <body>
 
-    <!-- Екран завантаження -->
-    <div id="loading-screen">
-        <div class="loading-text">Завантаження: <span id="loading-value">0</span>%</div>
+    <!-- Екран технічної перерви -->
+    <div id="maintenance-screen">
+        Технічна перерва
     </div>
 
-    <!-- Сцена меню -->
+    <!-- Меню -->
     <div id="menu-screen">
-        <div id="record-display">Рекорд: 0</div>
-        <img id="belle-pin" src="images/spicypin.png" alt="Spicy Pin"> <!-- Змінено на spicypin.png -->
-        <img id="pin-pack" src="images/pinpack.png" alt="Pin Pack"> <!-- Додано нове зображення -->
+        <!-- Інший контент меню -->
     </div>
 
-    <!-- Сцена pin pack -->
+    <!-- Pin Pack -->
     <div id="pin-pack-screen">
-        <div id="pin-pack-text">Новий значок</div>
-        <img id="belle-pin-pinpack" src="images/belle_pin.png" alt="Belle Pin">
+        <!-- Контент Pin Pack -->
     </div>
 
-    <!-- Аудіо для відтворення -->
-    <audio id="menu-sound" src="sound/music_menu.mp3"></audio>
+    <audio id="menu-sound" src="sound/brawloween_menu_1.mp3"></audio>
 
     <script>
-        let loading = 0;
-        let record = 0;
+        // Приховати екран технічної перерви після затримки
+        setTimeout(() => {
+            document.getElementById('maintenance-screen').style.display = 'none';
+        }, 5000); // Затримка 5 секунд
 
-        // Оновлення значення завантаження
-        function updateLoading() {
-            const loadingValue = document.getElementById('loading-value');
-            const loadingScreen = document.getElementById('loading-screen');
-            const menuScreen = document.getElementById('menu-screen');
-
-            loadingValue.textContent = loading; // Оновлення відображення завантаження
-
-            if (loading < 100) {
-                loading++; // Збільшуємо значення завантаження
-            } else {
-                // Показуємо меню, коли завантаження досягає 100%
-                loadingScreen.style.display = 'none'; // Приховуємо екран завантаження
-                menuScreen.style.display = 'block'; // Показуємо меню
-                return;
-            }
-
-            setTimeout(updateLoading, 50); // Інтервал оновлення
-        }
-
-        // Запуск оновлення завантаження при завантаженні сторінки
-        updateLoading();
-
-        // Функція для збільшення рекорду
-        document.getElementById('belle-pin').addEventListener('click', function() {
-            record++; // Збільшуємо значення рекорду
-            document.getElementById('record-display').textContent = 'Рекорд: ' + record; // Оновлюємо відображення
-        });
-
-        // Відображення сцени pin pack при натисканні на pinpack.png
-        document.getElementById('pin-pack').addEventListener('click', function() {
-            document.getElementById('menu-screen').style.display = 'none'; // Приховуємо сцену меню
-            const pinPackScreen = document.getElementById('pin-pack-screen');
-            pinPackScreen.style.display = 'flex'; // Показуємо сцену pin pack
-
-            // Скидання opacity і плавне відображення зображення
-            const bellePin = document.getElementById('belle-pin-pinpack');
-            bellePin.style.opacity = 0;
-            setTimeout(() => {
-                bellePin.style.opacity = 1;
-            }, 10); // Невелика затримка для відновлення анімації
-        });
+        setTimeout(() => {
+            bellePin.style.opacity = 1;
+        }, 10); // Невелика затримка для відновлення анімації
 
         // Повернення до меню при натисканні на екран сцени pin pack
         document.getElementById('pin-pack-screen').addEventListener('click', function() {
