@@ -11,38 +11,39 @@
             overflow: hidden;
         }
 
-        /* Основні стилі */
-        #menu-screen {
-            background-image: url('images/brawloween_lobby.png');
-            background-size: cover;
-            background-position: center;
+        #loading-screen {
+            background-color: lightblue;
             width: 100vw;
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+
+        #menu-screen {
+            background-image: url('images/brawloween_lobby.png');
+            background-size: cover;
+            width: 100vw;
+            height: 100vh;
+            display: none;
             position: relative;
         }
 
-        /* Прямокутник для технічної перерви */
-        #maintenance-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(128, 128, 128, 0.8); /* Сірий з прозорістю */
-            color: white;
-            display: flex;
+        #gift-screen {
+            background-color: gray;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            color: white;
             font-size: 2em;
-            font-weight: bold;
-            z-index: 10; /* На передньому плані в межах menu-screen */
+            text-align: center;
         }
 
-        /* Інші стилі */
-        #pin-pack-screen {
+        #drop-screen {
             background-color: lightgreen;
             width: 100vw;
             height: 100vh;
@@ -51,47 +52,222 @@
             align-items: center;
             position: relative;
         }
+
+        #back-button {
+            position: absolute;
+            top: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        #news-button {
+            position: absolute;
+            top: 60%;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        #select-pin-button {
+            position: absolute;
+            left: 1%;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        #belle-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            cursor: pointer;
+        }
+
+        #pinpack {
+            position: absolute;
+            bottom: 60px;
+            left: 10px;
+            width: 80px;
+            cursor: pointer;
+        }
+
+        #record-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 2em;
+            color: white;
+            font-weight: bold;
+        }
+
+        #belle-pin-drop {
+            width: 80px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #belle-pin-drop.visible {
+            opacity: 1;
+        }
+
+        #news-popup {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: rgba(128, 128, 128, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            display: none;
+        }
+
+        #news-popup p {
+            margin: 10px 0;
+        }
+
+        #gift-message {
+            margin-bottom: 20px;
+        }
+
+        #gift-image {
+            width: 100px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Меню -->
-    <div id="menu-screen">
-        <!-- Прямокутник технічної перерви в межах меню -->
-        <div id="maintenance-overlay">
-            Технічна перерва
-        </div>
-        <!-- Інший контент меню -->
+    <div id="loading-screen">
+        <div class="loading-text">Завантаження: <span id="loading-value">0</span>%</div>
     </div>
 
-    <!-- Pin Pack -->
-    <div id="pin-pack-screen">
-        <!-- Контент Pin Pack -->
+    <div id="menu-screen">
+        <div id="record-display">Рекорд: 0</div>
+        
+        <button id="select-pin-button">Select Pin</button>
+        <button id="news-button">News</button>
+        <img id="belle-pin" src="images/spicypin.png" alt="Spicy Pin">
+        <img id="pinpack" src="images/pinpack.png" alt="Pin Pack">
+        
+        <!-- News Popup -->
+        <div id="news-popup">
+            <p>Новини гри</p>
+            <p>Клікай та отримай нагороди! Набери рекорд 100 та отримай</p>
+            <p>Ексклюзивний Пін веселого хеловіну 🎃</p>
+        </div>
+    </div>
+
+    <!-- Gift Screen -->
+    <div id="gift-screen">
+        <div id="gift-message">Новий значок</div>
+        <img id="gift-image" src="images/brawloween_pin1.png" alt="Brawloween Pin">
+    </div>
+
+    <div id="drop-screen">
+        <img id="belle-pin-drop" class="fade-in" src="images/belle_pin.png" alt="Belle Pin">
     </div>
 
     <audio id="menu-sound" src="sound/brawloween_menu_1.mp3"></audio>
 
     <script>
-        // Приховати прямокутник технічної перерви після затримки
-        setTimeout(() => {
-            document.getElementById('maintenance-overlay').style.display = 'none';
-        }, 5000); // Затримка 5 секунд
+        let loading = 0;
+        let record = 0;
+        let pinState = 0;
+        let giftShown = false;
 
-        setTimeout(() => {
-            bellePin.style.opacity = 1;
-        }, 10); // Невелика затримка для відновлення анімації
+        function updateLoading() {
+            const loadingValue = document.getElementById('loading-value');
+            const loadingScreen = document.getElementById('loading-screen');
+            const menuScreen = document.getElementById('menu-screen');
 
-        // Повернення до меню при натисканні на екран сцени pin pack
-        document.getElementById('pin-pack-screen').addEventListener('click', function() {
-            document.getElementById('pin-pack-screen').style.display = 'none'; // Приховуємо сцену pin pack
-            document.getElementById('menu-screen').style.display = 'block'; // Показуємо сцену меню
+            loadingValue.textContent = loading;
+
+            if (loading < 100) {
+                loading++;
+            } else {
+                loadingScreen.style.display = 'none';
+                menuScreen.style.display = 'block';
+                return;
+            }
+
+            setTimeout(updateLoading, 50);
+        }
+
+        updateLoading();
+
+        document.getElementById('belle-pin').addEventListener('click', function() {
+            record++;
+            document.getElementById('record-display').textContent = 'Рекорд: ' + record;
+
+            if (record === 100 && !giftShown) {
+                document.getElementById('menu-screen').style.display = 'none';
+                document.getElementById('gift-screen').style.display = 'flex';
+                giftShown = true; // Сцена більше не буде показуватись після першого разу
+            }
         });
 
-        // Відтворення звуку при натисканні на фон меню
-        document.getElementById('menu-screen').addEventListener('click', function(event) {
+        document.getElementById('select-pin-button').addEventListener('click', function() {
+            const bellePin = document.getElementById('belle-pin');
+            pinState = (pinState + 1) % 2;
+
+            bellePin.src = pinState === 0 ? 'images/spicypin.png' : 'images/brawloween_pin.png';
+        });
+
+        document.getElementById('menu-screen').addEventListener('touchstart', function(event) {
             if (event.target === document.getElementById('menu-screen')) {
                 document.getElementById('menu-sound').play();
             }
+        });
+
+        document.getElementById('pinpack').addEventListener('click', function() {
+            document.getElementById('menu-screen').style.display = 'none';
+            const dropScreen = document.getElementById('drop-screen');
+            const bellePinDrop = document.getElementById('belle-pin-drop');
+
+            bellePinDrop.classList.remove('visible');
+            dropScreen.style.display = 'flex';
+
+            setTimeout(() => {
+                bellePinDrop.classList.add('visible');
+            }, 100);
+        });
+
+        document.getElementById('drop-screen').addEventListener('click', function() {
+            document.getElementById('drop-screen').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'block';
+        });
+
+        document.getElementById('news-button').addEventListener('click', function() {
+            const newsPopup = document.getElementById('news-popup');
+            newsPopup.style.display = newsPopup.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Повернення до меню з gift-screen
+        document.getElementById('gift-screen').addEventListener('click', function() {
+            document.getElementById('gift-screen').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'block';
         });
     </script>
 </body>
